@@ -1,6 +1,7 @@
 from discord.ext import commands
-import json
 from datetime import datetime
+import json
+import asyncio
 
 class Events(commands.Cog):
 
@@ -8,6 +9,7 @@ class Events(commands.Cog):
         self.bot = bot
         self.guild = None
         self.role_message = None
+        self.channel = None
 
     # Load JSON data when bot is ready
     # Add reactions to role message
@@ -21,8 +23,8 @@ class Events(commands.Cog):
 
         # Get guild, role channel and role message
         self.guild = self.bot.get_guild(self.data['guild_id'])
-        channel = self.bot.get_channel(self.data['role_channel_id'])
-        self.role_message = await channel.fetch_message(self.data['role_message_id'])
+        self.channel = self.bot.get_channel(self.data['role_channel_id'])
+        self.role_message = await self.channel.fetch_message(self.data['role_message_id'])
 
         # Get each emoji and add the reactions
         for key, value in list(self.data.items())[3:]:
@@ -50,12 +52,28 @@ class Events(commands.Cog):
         if payload.emoji.name in self.data:
             role = self.guild.get_role(self.data[payload.emoji.name]['role_id'])
 
+            # Add the role
             if role not in payload.member.roles:
                 await payload.member.edit(roles=payload.member.roles + [role])   
+                
+                # Send message to let the user know the role has been added
+                # Remove the message after 5 seconds
+                message = await self.channel.send(f'<@{payload.member.id}> has added the role {role.mention}')
+                await asyncio.sleep(5)
+                await message.delete()
             else:
+                # Remove the role 
                 roles = payload.member.roles
                 roles.remove(role)
                 await payload.member.edit(roles=roles)
 
+                # Send message to let the user know the role has been removed
+                # Remove the message after 5 seconds
+                message = await self.channel.send(f'<@{payload.member.id}> has removed the role {role.mention}')
+                await asyncio.sleep(5)
+                await message.delete()
+                
+
         # Remove the reaction when done
         await self.role_message.remove_reaction(payload.emoji, payload.member)
+
