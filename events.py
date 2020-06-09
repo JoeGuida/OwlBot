@@ -61,7 +61,7 @@ class Events(commands.Cog):
                 # Send message to let the user know the role has been added
                 # Remove the message after 5 seconds
                 message = await self.channel.send(f'<@{payload.member.id}> has added the role {role.name}')
-                await asyncio.sleep(5)
+                await asyncio.sleep(1)
                 await message.delete()
             else:
                 # Remove the role 
@@ -72,5 +72,5 @@ class Events(commands.Cog):
                 # Send message to let the user know the role has been removed
                 # Remove the message after 5 seconds
                 message = await self.channel.send(f'<@{payload.member.id}> has removed the role {role.name}')
-                await asyncio.sleep(5)
+                await asyncio.sleep(1)
                 await message.delete()
