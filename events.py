@@ -50,6 +50,8 @@ class Events(commands.Cog):
         # add the role if the member doesn't have it
         # remove the role if the member has it
         if payload.emoji.name in self.data:
+            # Remove the reaction and get the role
+            await self.role_message.remove_reaction(payload.emoji, payload.member)
             role = self.guild.get_role(self.data[payload.emoji.name]['role_id'])
 
             # Add the role
@@ -72,8 +74,3 @@ class Events(commands.Cog):
                 message = await self.channel.send(f'<@{payload.member.id}> has removed the role {role.name}')
                 await asyncio.sleep(5)
                 await message.delete()
-                
-
-        # Remove the reaction when done
-        await self.role_message.remove_reaction(payload.emoji, payload.member)
-
