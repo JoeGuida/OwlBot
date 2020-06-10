@@ -3,6 +3,8 @@ from datetime import datetime
 import json
 import asyncio
 
+timeout_seconds = 5
+
 class Events(commands.Cog):
 
     def __init__(self, bot):
@@ -61,7 +63,7 @@ class Events(commands.Cog):
                 # Send message to let the user know the role has been added
                 # Remove the message after 5 seconds
                 message = await self.channel.send(f'<@{payload.member.id}> has added the role {role.name}')
-                await asyncio.sleep(1)
+                await asyncio.sleep(timeout_seconds)
                 await message.delete()
             else:
                 # Remove the role 
@@ -72,5 +74,5 @@ class Events(commands.Cog):
                 # Send message to let the user know the role has been removed
                 # Remove the message after 5 seconds
                 message = await self.channel.send(f'<@{payload.member.id}> has removed the role {role.name}')
-                await asyncio.sleep(1)
+                await asyncio.sleep(timeout_seconds)
                 await message.delete()
