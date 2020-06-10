@@ -45,7 +45,8 @@ class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_raw_reaction_add(self, payload):
         # Only look at reactions to the role message
-        if payload.message_id != self.data['role_message_id']:
+        if (payload.message_id != self.data['role_message_id']
+           or payload.member.id == self.bot.user.id):
             return
 
         # If one of the correct emojis is used
